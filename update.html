@@ -61,7 +61,7 @@
             target: 'EE',
             relation: '989'
         }]
-        this.update2(nodes, edgs);
+        this.update3(nodes, edgs);
 
     };
 
@@ -151,7 +151,7 @@
         gs.append('text')
             .attr('dy', '0.36em')
             .attr('font-size', 18) //节点字体大小
-            .style('fill', '#fff')
+            .style('fill', 'blue')
             .attr('text-anchor', 'middle')
             .attr('x', function(d) {
                 if (d.id.length <= 4) {
@@ -176,6 +176,164 @@
                         .text(bot);
                 }
             })
+
+
+        svg_links = svg_links
+            .data(links, d => [d.source, d.target])
+            .join("line")
+            .attr('stroke', '#c5d7ff')
+            .attr('stroke-width', 1)
+            .attr('marker-end', 'url(#arrow)');;
+
+
+        // lineTexts = lineTexts.selectAll('text')
+        // lineTexts = lineTexts
+
+        //     .data(links)
+        //     .join('text')
+        //     .attr('dy', 0)
+        //     .text(d => d.relation);
+
+        lineTexts = lineTexts
+            .data(links)
+            .join('g')
+            .attr('class', function(d) {
+
+                d3.select(this).select('text')
+                    // .data(d)
+                    // // .append('text')
+                    // .join('text')
+                    .attr('dy', 0)
+                    .attr('font-size', 14) //连线上字体大小
+                    .attr('fill', '#989898')
+                    .attr('text-anchor', 'start')
+                    .text(d.relation);
+            });
+
+
+
+        // .attr('class', function(d) {
+
+        //     d3.select(this)
+        //         .append('text')
+        //         // .attr('dy', 10)
+        //         .attr('dy', 0)
+        //         .attr('font-size', 14) //连线上字体大小
+        //         .attr('fill', '#989898')
+        //         .attr('text-anchor', 'start')
+        //         .text(d.relation);
+        // });
+
+
+        // lineTexts = lineTexts.selectAll('text')
+        //     .data(edgs)
+        //     .join('line')
+        //     .attr('class', function(d) {
+
+        //         d3.select(this)
+        //             .append('text')
+        //             // .attr('dy', 10)
+        //             .attr('dy', 0)
+        //             .attr('font-size', 14) //连线上字体大小
+        //             .attr('fill', '#989898')
+        //             .attr('text-anchor', 'start')
+        //             .text(d.relation);
+        //     });
+
+
+
+        forceSimulation.nodes(nodes);
+        forceSimulation.force("link").links(links);
+        forceSimulation.alpha(1).restart();
+
+
+    };
+
+
+
+    function update3(nodes, links) {
+
+        // Make a shallow copy to protect against mutation, while
+        // recycling old nodes to preserve position and velocity.
+        const old = new Map(gs.data().map(d => [d.id, d]));
+        nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+        links = links.map(d => Object.assign({}, d));
+
+        gs = gs
+            .data(nodes)
+            // .enter()
+            // .append('g')
+            .data(nodes, d => d.id)
+            .join(enter => {
+                var g_jd = enter.append('g')
+                    .append("circle")
+                    .attr("r", 30)
+                    .attr("fill", 'red');
+
+                g_jd
+                    .append('title').text(d => d.id);
+
+                g_jd
+                    .append('text')
+                    .attr('dy', '0.36em')
+                    .attr('font-size', 18) //节点字体大小
+                    .style('fill', 'blue')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', function(d) {
+                        if (d.id.length <= 4) {
+                            d3.select(this)
+                                .append('tspan')
+                                .attr('x', 0)
+                                .attr('y', 2)
+                                .text(d.id);
+                        } else {
+                            const top = d.id.substring(0, 4)
+                            const bot = d.id.length > 8 ? d.id.substring(4, 7) + '...' : d.id.substring(4, 8)
+                            d3.select(this)
+                                .append('tspan')
+                                .attr('x', 0)
+                                .attr('y', -7)
+                                .text(top);
+                            d3.select(this)
+                                .append('tspan')
+                                .attr('x', 0)
+                                .attr('y', 10)
+                                .style('fill', 'blue') //字体颜色
+                                .text(bot);
+                        }
+                    })
+            });
+
+        // gs.data(nodes, d => d.id).join('title').append('title').text(d => d.id);
+        // // gs.append('text').join('text')
+        // gs.append('text').join('text')
+        //     .attr('dy', '0.36em')
+        //     .attr('font-size', 18) //节点字体大小
+        //     .style('fill', 'blue')
+        //     .attr('text-anchor', 'middle')
+        //     .attr('x', function(d) {
+        //         if (d.id.length <= 4) {
+        //             d3.select(this)
+        //                 .append('tspan')
+        //                 .attr('x', 0)
+        //                 .attr('y', 2)
+        //                 .text(d.id);
+        //         } else {
+        //             const top = d.id.substring(0, 4)
+        //             const bot = d.id.length > 8 ? d.id.substring(4, 7) + '...' : d.id.substring(4, 8)
+        //             d3.select(this)
+        //                 .append('tspan')
+        //                 .attr('x', 0)
+        //                 .attr('y', -7)
+        //                 .text(top);
+        //             d3.select(this)
+        //                 .append('tspan')
+        //                 .attr('x', 0)
+        //                 .attr('y', 10)
+        //                 .style('fill', 'blue') //字体颜色
+        //                 .text(bot);
+        //         }
+        //     })
 
 
         svg_links = svg_links

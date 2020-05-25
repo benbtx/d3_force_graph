@@ -47,6 +47,9 @@
         }, {
             id: 'EE',
             type: 2
+        }, {
+            id: 'AA',
+            type: 2,
         }]
         edgs = [{
             source: 'CC',
@@ -60,7 +63,26 @@
             source: 'BB',
             target: 'EE',
             relation: '989'
-        }]
+        }, {
+            source: 'AA',
+            target: 'BB',
+            relation: '3443'
+        }];
+        // nodes.push({
+        //     id: 'AA',
+        //     type: 2,
+        //     // index: 4,
+        //     // x: 617.4677814425012,
+        //     // y: 328.120135673262,
+        //     // vy: 0.0007348551635741882,
+        //     // vx: 0.00040020639863079754,
+        // });
+        // edgs.push({
+        //     source: 'AA',
+        //     target: 'BB',
+        //     relation: '3443'
+        // });
+
         this.update3(nodes, edgs);
 
     };
@@ -259,54 +281,230 @@
         nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
         links = links.map(d => Object.assign({}, d));
 
-        gs = gs
+
+        // g.selectAll('.circleText')
+        // .data(nodes)
+        // .join()
+        // .append('g')
+
+        // svg.selectAll(".circle_g")
+        gs = gs.data(nodes)
             .data(nodes)
-            // .enter()
-            // .append('g')
-            .data(nodes, d => d.id)
-            .join(enter => {
-                var g_jd = enter.append('g')
-                    .append("circle")
-                    .attr("r", 30)
-                    .attr("fill", 'red');
+            .join(
+                // enter => enter.append("circle"),
 
-                g_jd
-                    .append('title').text(d => d.id);
+                // enter => {
+                //     var g = enter.selectAll('.force_g').append("g")
+                //         .classed('circle_g2', true);
+                //     g.append("circle")
+                //         .attr("r", 30)
+                //         .attr("fill", 'red');
+                //     g.append('title')
+                //         .text('ad'),
+                //         g.append('text')
+                //         .text('ad');
+                // },
 
-                g_jd
-                    .append('text')
-                    .attr('dy', '0.36em')
-                    .attr('font-size', 18) //节点字体大小
-                    .style('fill', 'blue')
-                    .attr('text-anchor', 'middle')
-                    .attr('x', function(d) {
-                        if (d.id.length <= 4) {
-                            d3.select(this)
-                                .append('tspan')
-                                .attr('x', 0)
-                                .attr('y', 2)
-                                .text(d.id);
-                        } else {
-                            const top = d.id.substring(0, 4)
-                            const bot = d.id.length > 8 ? d.id.substring(4, 7) + '...' : d.id.substring(4, 8)
-                            d3.select(this)
-                                .append('tspan')
-                                .attr('x', 0)
-                                .attr('y', -7)
-                                .text(top);
-                            d3.select(this)
-                                .append('tspan')
-                                .attr('x', 0)
-                                .attr('y', 10)
-                                .style('fill', 'blue') //字体颜色
-                                .text(bot);
-                        }
-                    })
-            });
+                enter => {
+                    // gs.
+                    var g = enter.append("g").classed('circle_g', true);;
+                    g.append("circle")
+                        .attr('r', 32)
+                        .attr('cursor', 'pointer')
+                        .attr('stroke', 'rgb(50, 170, 255)')
+                        .attr('stroke-width', 0)
+                        .attr('fill', (d) => {
+                            if (d.type === 1) {
+                                return '#407cff'
+                            }
+                            return '#989898'
+                        });
+                    g.append('title')
+                        .text('ad'),
+                        g.append('text')
+                        .text('ad');
+                },
 
-        // gs.data(nodes, d => d.id).join('title').append('title').text(d => d.id);
-        // // gs.append('text').join('text')
-        // gs.append('text').join('text')
+
+                update => {
+                    update.select('circle')
+                        .attr("r", 30)
+                        .attr("fill", 'red'),
+                        update.select('title')
+                        .text(d => d.id),
+                        update.select('text')
+                        .text(d => d.id);
+                },
+                exit => exit.remove()
+            )
+
+
+        // gs = gs.data(nodes)
+        //     // .join('g')
+        //     .join(
+        //         enter => {
+        //             var g = enter.append("g");
+        //             g.append("circle")
+        //                 .attr("r", 30)
+        //                 .attr("fill", 'red');
+        //             g.append('title')
+        //                 .text(d => d.id),
+        //                 g.append('text')
+        //                 .text(d => d.id);
+        //         },
+        //         update => {
+        //             update.select('circle')
+        //                 .attr("r", 30)
+        //                 .attr("fill", 'red'),
+        //                 update.select('title')
+        //                 .text(d => d.id),
+        //                 update.select('text')
+        //                 .text(d => d.id);
+        //         }
+        //         // exit => exit
+        //         // .call(exit => exit.transition(t)
+        //         //     .remove())
+        //     )
+
+
+
+
+        // .attr('class', function(d) {
+
+        //     d3.select(this).select('circle')
+        //         .attr("r", 30)
+        //         .attr("fill", 'red');
+        //     d3.select(this).select('title')
+        //         .text(d => d.id);
+        //     d3.select(this).select('text')
+        //         .text(d => d.id);
+        // });
+
+
+        // gs = gs
+        //     // gs = g.selectAll('.circleText')
+        //     .data(nodes)
+        //     // .data(nodes, d => d.id)
+        //     // .enter()
+        //     // .append('g')
+        //     // .data(nodes, d => d.id)
+        //     .join(enter => {
+        //             var g_jd = enter.append('g');
+        //             g_jd.append("circle")
+        //                 .attr("r", 30)
+        //                 .attr("fill", 'red');
+        //         },
+
+        //         update => {
+        //             update
+        //                 .attr("r", 30)
+        //                 .attr("fill", 'blue');
+        //         },
+
+        //         // exit => {
+        //         //     exit.remove()
+        //         // }
+
+        //         //纯js 替换，不推荐 
+
+
+        //         // g_jd.data(nodes).append("title").text(d => d.id);
+
+        //         // g_jd.data(nodes, d => d.id).append("title").text(d => d.id);
+
+
+        //         // g_jd
+        //         //     .append('title').text(d => d.id);
+
+        //         // g_jd
+        //         //     .append('text')
+        //         //     .attr('dy', '0.36em')
+        //         //     .attr('font-size', 18) //节点字体大小
+        //         //     .style('fill', 'blue')
+        //         //     .attr('text-anchor', 'middle')
+        //         //     .attr('x', function(d) {
+        //         //         if (d.id.length <= 4) {
+        //         //             d3.select(this)
+        //         //                 .append('tspan')
+        //         //                 .attr('x', 0)
+        //         //                 .attr('y', 2)
+        //         //                 .text(d.id);
+        //         //         } else {
+        //         //             const top = d.id.substring(0, 4)
+        //         //             const bot = d.id.length > 8 ? d.id.substring(4, 7) + '...' : d.id.substring(4, 8)
+        //         //             d3.select(this)
+        //         //                 .append('tspan')
+        //         //                 .attr('x', 0)
+        //         //                 .attr('y', -7)
+        //         //                 .text(top);
+        //         //             d3.select(this)
+        //         //                 .append('tspan')
+        //         //                 .attr('x', 0)
+        //         //                 .attr('y', 10)
+        //         //                 .style('fill', 'blue') //字体颜色
+        //         //                 .text(bot);
+        //         //         }
+        //         //     })
+        //     );
+
+        // var g_jd;
+        // gs = gs
+        //     // .data(nodes)
+        //     .data(nodes, d => d.id)
+        //     .join(enter => {
+        //         g_jd = enter.append('g');
+        //         g_jd.append("circle")
+        //             .attr("r", 30)
+        //             .attr("fill", 'red');
+        //         // g_jd.append("title")
+        //         //     .text(d => d.id);
+        //         // g_jd.append("text")
+        //         //     .attr('dy', '0.36em')
+        //         //     .attr('font-size', 18) //节点字体大小
+        //         //     .style('fill', 'blue')
+        //         //     .attr('text-anchor', 'middle')
+        //         //     .attr('x', function(d) {
+        //         //         if (d.id.length <= 4) {
+        //         //             d3.select(this)
+        //         //                 .append('tspan')
+        //         //                 .attr('x', 0)
+        //         //                 .attr('y', 2)
+        //         //                 .text(d.id);
+        //         //         } else {
+        //         //             const top = d.id.substring(0, 4)
+        //         //             const bot = d.id.length > 8 ? d.id.substring(4, 7) + '...' : d.id.substring(4, 8)
+        //         //             d3.select(this)
+        //         //                 .append('tspan')
+        //         //                 .attr('x', 0)
+        //         //                 .attr('y', -7)
+        //         //                 .text(top);
+        //         //             d3.select(this)
+        //         //                 .append('tspan')
+        //         //                 .attr('x', 0)
+        //         //                 .attr('y', 10)
+        //         //                 .style('fill', 'blue') //字体颜色
+        //         //                 .text(bot);
+        //         //         }
+        //         //     })
+
+        //     });
+
+
+        // .join(enter => {
+        //     enter.append('g')
+        //         .append("circle")
+        //         .attr("r", 8)
+        //         .attr("fill", 'red')
+        // });
+
+
+        // // gs.data(nodes, d => d.id).join('title').select('title').remove().append('title').text(d => d.id);
+        // g_jd.data(nodes).join('title').text(d => d.id);
+
+        // g_id.data(nodes).join('text')
+        //     // gs.select('text').data(nodes).join('text')
+        //     // gs.append('text').join('text')
+        //     // gs.data(nodes).join('text').select('text').remove().append('text')
         //     .attr('dy', '0.36em')
         //     .attr('font-size', 18) //节点字体大小
         //     .style('fill', 'blue')
@@ -534,6 +732,7 @@
         .data(nodes)
         .enter()
         .append('g')
+        .classed('circle_g', true)
         .on("mouseover", function(d, i) {
             // //显示连接线上的文字
             // edges_text.style("fill-opacity", function (edge) {
@@ -600,7 +799,8 @@
                     const angel = Math.atan((d.target.y - d.source.y) / (d.target.x - d.source.x)) * 180 / Math.PI;
                     return `rotate(${angel} ${(d.target.x + d.source.x) / 2} ${(d.target.y + d.source.y) / 2}) translate(${(d.target.x + d.source.x) / 2 - 25}, ${(d.target.y + d.source.y) / 2 -7})`;
                 });
-            gs.attr('transform', d => `translate(${d.x}, ${d.y})`);
+            // gs.attr('transform', d => `translate(${d.x}, ${d.y})`);
+            svg.selectAll('.circle_g').attr('transform', d => `translate(${d.x}, ${d.y})`);;
         })
 
     forceSimulation.force('link')
